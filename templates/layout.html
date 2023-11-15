@@ -1,0 +1,100 @@
+{{ define "layout" }}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>S. Smith | Bio | Made of Glass</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+        <style type="text/css">
+        </style>
+    </head>
+    <body class="bg-dark text-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-2">
+                    <img class="img-fluid rounded-5 rounded-top-0" src="{{ .UserInfo.AvatarURL }}" alt="Headshot" />
+                </div>
+                <div class="col">
+                    <h1 class="display-1">S. Smith</h1>
+                    <h2 class="display-6">Senior Engineer</h2>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-info px-1 me-2" href="https://cal.madeof.glass/"><i class="bi bi-calendar"></i> Book a Call</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-info px-1 ms-2" href="files/resume.pdf"><i class="bi bi-file-earmark-pdf"></i> Résumé</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-info px-1 ms-2" href="{{ .UserInfo.URL }}"><i class="bi bi-github"></i> Github ({{ .UserInfo.Name }})</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h2>Recent Commits</h2>
+                    <div class="accordion" id="commitAccordion">
+                        {{ range $idx, $event := .Events }}
+                            {{ if eq $event.Actor.Name "faangbait" }}
+                                {{ if or (eq $event.Type "PushEvent") (eq $event.Type "PublicEvent") }}
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button{{ if ne $idx 0 }} collapsed{{ end }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $idx }}" aria-expanded="{{ if eq $idx 0 }}true{{ else }}false{{ end }}" aria-controls="collapse{{ $idx }}">
+                                                <span class="fw-bolder mx-2">faangbait/{{ $event.Repo.Name }}</span>
+                                                {{ if eq $event.Type "PushEvent" }} &rarr; <span class="font-monospace bg-warning px-2 mx-2">{{ printf "%.6s" $event.Payload.Head }}</span>
+                                                {{ else if eq $event.Type "PublicEvent" }} (just launched)
+                                                {{ end }}
+                                            </button>
+                                        </h2>
+                                        <div id="collapse{{ $idx }}" class="accordion-collapse collapse{{ if eq $idx 0 }} show{{ end }}" data-bs-parent="#commitAccordion">
+                                            <div class="accordion-body">
+                                                <ul class="list-group list-group-flush">
+                                                    {{ if eq $event.Type "PublicEvent" }}
+                                                        <li class="list-group-item">
+                                                            {{ $event.Actor.Name }} has released <span class="fw-bold">{{ $event.Repo.Name }}</span> to the open source community!
+                                                        </li>
+                                                    {{ else if and (eq $event.Type "PushEvent") $event.Payload.Commits }}
+                                                        {{ range $commit := $event.Payload.Commits }}
+                                                            <li class="list-group-item">{{ $commit.Message }}</li>
+                                                        {{ end }}
+                                                    {{ end }}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{ end }}
+                            {{ end }}
+                        {{ end }}
+                    </div>
+                </div>
+                <div class="col">
+                    <h2>Active Repositories</h2>
+                    <ul class="list-group">
+                        {{ range $repo := .Repos }}
+                            {{ if and (eq $repo.Owner.Name "faangbait") (not $repo.Fork) (not $repo.Archived) }}
+                            <a href="{{ $repo.URL }}" class="list-group-item list-group-item-action list-group-item-info">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ $repo.Name }}</h5>
+                                    {{ if $repo.Language }}
+                                        <small>{{ $repo.Language }} <i class="bi bi-github"></i></small>
+                                    {{ end }}
+                                </div>
+                                <p class="mb-1">{{ $repo.Description }}</p>
+                            </a>
+                            {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col">
+                    <h2>Articles</h2>
+                </div>
+            </div> -->
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
+</html>
+{{ end }}
