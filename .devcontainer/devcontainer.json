@@ -1,0 +1,12 @@
+{
+	"name": "Go",
+	"image": "mcr.microsoft.com/devcontainers/go:0-1",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.go"
+			]
+		}
+	},
+	"runArgs": ["--env-file",".devcontainer/.env"]
+}
