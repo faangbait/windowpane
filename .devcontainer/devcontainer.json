@@ -1,12 +1,36 @@
 {
-	"name": "Go",
-	"image": "mcr.microsoft.com/devcontainers/go:0-1",
+	"name": "Windowpane",
+	"image": "mcr.microsoft.com/devcontainers/go:1.20",
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.go"
-			]
+				"ms-vscode.go",
+				"ms-azuretools.vscode-docker"
+			],
+			"settings": {
+				"go.useLanguageServer": true
+			}
 		}
 	},
-	"runArgs": ["--env-file",".devcontainer/.env"]
+	"runArgs": [
+		"--init",
+		"--env-file",
+		".devcontainer/.env",
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined"
+	],
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=consistent",
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"installDockerBuildx": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v1"
+		}
+	},
+	"remoteUser": "root"
 }

@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting Windowpane")
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("files/"))
@@ -15,7 +16,7 @@ func main() {
 	mux.Handle("/files/", http.StripPrefix("/files", fileServer))
 	mux.HandleFunc("/", getTemplate)
 
-	checkError(http.ListenAndServe(":3333", mux))
+	checkError(http.ListenAndServe(":8080", mux))
 }
 
 func checkError(e error) {
