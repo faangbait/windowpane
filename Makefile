@@ -1,5 +1,7 @@
-build:
+login:
 	docker login registry.lab.madeof.glass
+
+build:
 	docker build -t registry.lab.madeof.glass/windowpane:v1.0.0 .
 	docker push registry.lab.madeof.glass/windowpane:v1.0.0
 
