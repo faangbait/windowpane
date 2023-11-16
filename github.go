@@ -33,8 +33,16 @@ func getBasicInfo(c *github.Client) (ghUser, *github.Response) {
 
 func getRepositories(c *github.Client) ([]ghRepository, *github.Response) {
 	var repoList []ghRepository
+	opts := github.RepositoryListOptions{
+		Visibility:  "public",
+		Affiliation: "owner,collaborator",
+		ListOptions: github.ListOptions{
+			Page:    1,
+			PerPage: 100,
+		},
+	}
 
-	repos, resp, err := c.Repositories.List(context.TODO(), GithubUsername, nil)
+	repos, resp, err := c.Repositories.List(context.TODO(), GithubUsername, &opts)
 	if err != nil {
 		log.Println(err.Error())
 		return repoList, resp

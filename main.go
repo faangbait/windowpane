@@ -14,9 +14,15 @@ func main() {
 	fileServer := http.FileServer(http.Dir("files/"))
 
 	mux.Handle("/files/", http.StripPrefix("/files", fileServer))
+	mux.HandleFunc("/favicon.ico", faviconHandler)
 	mux.HandleFunc("/", getTemplate)
 
 	checkError(http.ListenAndServe(":8080", mux))
+}
+
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+
+	http.ServeFile(w, r, "files/favicon.ico")
 }
 
 func checkError(e error) {
